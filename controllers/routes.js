@@ -157,6 +157,7 @@ const routes = (app) => {
       }
     }
   });
+  //Editar perfil usuario
   app.put("/users", authMiddleware, async (req, res) => {
     try {
       const userId = req.user.id;
