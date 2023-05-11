@@ -1,4 +1,3 @@
-
 TÍTULO
 App para compartir enlaces.
 DESCRIPCIÓN

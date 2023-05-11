@@ -8,4 +8,5 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 routes(app);
 app.listen(port, () => console.log(`Server listening on port ${port}`));
+
 module.exports = app;
