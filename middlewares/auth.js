@@ -1,33 +1,26 @@
 const jwt = require('jsonwebtoken');
-const { generateError } = require('../helpers');
-
-const authUser = (req, res, next) => {
-  try {
-    const { authorization } = req.headers;
-    if (!authorization) {
-      throw generateError('Falta la cabecera de Authorization, 401');
-    }
-
-    //Comprobamos que el token sea correcto
-    let token;
-
-    try {
-      token = jwt.verify(authorization, process.env.SECRET);
-    } catch {
-      throw generateError('Token incorrecto', 401);
-    }
+const userModel = require('../users/userModel');
+const authenticateUser = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
     console.log(token);
-
-    //Metemos la informacion del token en la request para usarla en el controlador
-    req.auth = token;
-
-    //Saltamos al controlador
+    let tokenData;
+    try {
+      tokenData = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+      throw new Error('token incorrecto');
+    }
+    const { user } = tokenData;
+    console.log(user);
+    let [userDB] = await userModel.findById(user.id);
+    if (!userDB) {
+      return res.sendStatus(403);
+    }
+    req.user = userDB[0];
     next();
-  } catch (error) {
-    next(error);
+  } else {
+    res.status(401).json({ message: 'You must be logged in to do that' });
   }
 };
-
-module.exports = {
-  authUser,
-};
+module.exports = authenticateUser;

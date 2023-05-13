@@ -1,36 +1,42 @@
 require('dotenv').config();
-
 const { getConnection } = require('./db');
-
 async function main() {
   let connection;
-
   try {
     connection = await getConnection();
-
     console.log('Borrando tablas existentes');
-    await connection.query('DROP TABLE IF EXISTS tweets');
+    await connection.query('DROP TABLE IF EXISTS votes');
+    await connection.query('DROP TABLE IF EXISTS links');
     await connection.query('DROP TABLE IF EXISTS users');
     console.log('Creando tablas');
-
     await connection.query(`
-    CREATE TABLE users (
-      id INTEGER PRIMARY KEY AUTO_INCREMENT,
-      email VARCHAR(100) UNIQUE NOT NULL,
-      password VARCHAR(100) NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+      CREATE TABLE users (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL
+        );
     `);
-
     await connection.query(`
-    CREATE TABLE tweets(
-      id INTEGER PRIMARY KEY AUTO_INCREMENT,
-      users_id INTEGER NOT NULL,
-      text VARCHAR(280) NOT NULL,
-      image VARCHAR(100),
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (users_id) REFERENCES users(id)
-    );
+      CREATE TABLE links (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        userId INT NOT NULL,
+        url VARCHAR(255) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description VARCHAR(255),
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users(id)
+        );
+    `);
+    await connection.query(`
+      CREATE TABLE votes (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        userId INT NOT NULL,
+        linkId INT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users(id),
+        FOREIGN KEY (linkId) REFERENCES links(id)
+        );
     `);
   } catch (error) {
     console.error(error);
@@ -39,5 +45,4 @@ async function main() {
     process.exit();
   }
 }
-
 main();

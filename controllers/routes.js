@@ -133,7 +133,6 @@ const routes = (app) => {
   app.post('/links/:id/vote', authMiddleware, async (req, res) => {
     const linkId = req.params.id;
     const user = req.user;
-
     if (!user) {
       res.status(401).json({ message: 'You must be logged in to do that' });
     } else {
@@ -158,14 +157,13 @@ const routes = (app) => {
       }
     }
   });
-  // Editar perfil de usuario
+  //Editar perfil usuario
   app.put('/users', authMiddleware, async (req, res) => {
     try {
       const userId = req.user.id;
       const name = req.body.name;
       const email = req.body.email;
       let password = req.body.password;
-
       // Validar longitud y complejidad de contraseña
       if (
         password &&
@@ -178,12 +176,10 @@ const routes = (app) => {
             'Password must be 10 characters or less and contain at least one uppercase letter and one number',
         });
       }
-
       // Verificar si se proporcionó una nueva contraseña
       if (password) {
         password = await bcrypt.hash(password, 10);
       }
-
       await userModel.update(userId, name, email, password);
       res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
