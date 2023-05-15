@@ -1,14 +1,14 @@
-require('dotenv').config();
-const { getConnection } = require('./db');
+require("dotenv").config();
+const { getConnection } = require("./db");
 async function main() {
   let connection;
   try {
     connection = await getConnection();
-    console.log('Borrando tablas existentes');
-    await connection.query('DROP TABLE IF EXISTS votes');
-    await connection.query('DROP TABLE IF EXISTS links');
-    await connection.query('DROP TABLE IF EXISTS users');
-    console.log('Creando tablas');
+    console.log("Borrando tablas existentes");
+    await connection.query("DROP TABLE IF EXISTS votes");
+    await connection.query("DROP TABLE IF EXISTS links");
+    await connection.query("DROP TABLE IF EXISTS users");
+    console.log("Creando tablas");
     await connection.query(`
       CREATE TABLE users (
         id INT PRIMARY KEY AUTO_INCREMENT,
