@@ -15,7 +15,7 @@ async function main() {
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL
-        );
+      );
     `);
     await connection.query(`
       CREATE TABLE links (
@@ -26,7 +26,7 @@ async function main() {
         description VARCHAR(255),
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (userId) REFERENCES users(id)
-        );
+      );
     `);
     await connection.query(`
       CREATE TABLE votes (
@@ -34,9 +34,10 @@ async function main() {
         userId INT NOT NULL,
         linkId INT NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        voteCount INT NOT NULL DEFAULT 0, -- Columna para contar los votos
         FOREIGN KEY (userId) REFERENCES users(id),
         FOREIGN KEY (linkId) REFERENCES links(id)
-        );
+      );
     `);
   } catch (error) {
     console.error(error);
@@ -46,3 +47,14 @@ async function main() {
   }
 }
 main();
+
+
+
+
+
+
+
+
+
+
+
