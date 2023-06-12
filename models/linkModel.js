@@ -17,14 +17,14 @@ linkModel.findById = async (id) => {
 };
 linkModel.find = async (date) => {
   const connection = await getConnection();
-  const sql = `SELECT * FROM links WHERE convert(createdAt,date) = ?`;
+  const sql = `SELECT links.id, links.userId, links.url, links.title, links.description, links.createdAt, count(v.id) as votes FROM links left join votes v on links.id = v.linkId  WHERE convert(links.createdAt,date) = ? group by links.id`;
   let [result] = await connection.query(sql, [date]);
   connection.release();
   return result;
 };
 linkModel.delete = async (id) => {
   const connection = await getConnection();
-  const sql = `DELETE  FROM links WHERE id = ?`;
+  const sql = `DELETE  FROM links WHERE id = ? `;
   let result = await connection.query(sql, [id]);
   connection.release();
   return result;

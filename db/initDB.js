@@ -40,21 +40,10 @@ async function main() {
       );
     `);
   } catch (error) {
-    console.error(error);
+    console.log (error);
   } finally {
     if (connection) connection.release();
     process.exit();
   }
 }
 main();
-
-
-
-
-
-
-
-
-
-
-
