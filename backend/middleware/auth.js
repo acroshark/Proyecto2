@@ -9,7 +9,7 @@ const authenticateUser = async (req, res, next) => {
     try {
       tokenData = jwt.verify(token, process.env.JWT_SECRET);
     } catch (e) {
-      throw new Error("token incorrecto");
+      throw new Error("Token incorrecto");
     }
     const { user } = tokenData;
     console.log(user);
