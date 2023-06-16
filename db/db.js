@@ -1,5 +1,5 @@
-require('dotenv').config();
-const mysql = require('mysql2/promise');
+require("dotenv").config();
+const mysql = require("mysql2/promise");
 const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = process.env;
 let pool;
 //Get connection from pool
@@ -11,7 +11,7 @@ async function getConnection() {
       user: DB_USER,
       password: DB_PASS,
       database: DB_NAME,
-      timezone: 'local',
+      timezone: "local",
     });
   }
   return await pool.getConnection();
