@@ -1,14 +1,4 @@
 {
-  "name": "proyecto-2",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
@@ -23,7 +13,16 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "eslint": "^8.40.0",
-    "prettier": "^2.8.8"
-  }
+    "nodemon": "^2.0.22"
+  },
+  "name": "backend-sergio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
