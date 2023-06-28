@@ -4,7 +4,6 @@ const userModel = require("../users/userModel");
 const linkModel = require("../models/linkModel");
 const voteModel = require("../models/voteModel");
 const authMiddleware = require("../middleware/auth");
-
 const routes = (app) => {
   // Registro de nuevo usuario
   app.post("/register", async (req, res, next) => {
@@ -32,9 +31,9 @@ const routes = (app) => {
           name: name,
           email: email,
         };
-        // const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-        //   expiresIn: "30d",
-        // });
+        /*const token = jwt.sign({ user }, process.env.JWT_SECRET, {
+          expiresIn: "30d",
+        });*/
         res.status(200).json({ user });
       }
     } catch (error) {
@@ -42,7 +41,6 @@ const routes = (app) => {
       next(error);
     }
   });
-
   // Login de usuarios
   app.post("/login", async (req, res, next) => {
     try {
@@ -84,12 +82,12 @@ const routes = (app) => {
   // obtener todos los enlaces publicados hoy y en días anteriores
   app.get("/links", authMiddleware, async (req, res, next) => {
     try {
-      console.log(req.query);
+      const userId = req.user.id;
       const { date } = req.query;
       if (!date) {
         return res.status(400).json({ message: "date required" });
       }
-      const result = await linkModel.find(date);
+      const result = await linkModel.find(date, userId);
       res.status(200).json(result);
     } catch (err) {
       res.status(500).json({ message: "Error retrieving links" });
@@ -179,6 +177,21 @@ const routes = (app) => {
       next(error);
     }
   });
+  // Obtener perfil de usuario
+  app.get("/users", authMiddleware, async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const user = await userModel.findById(userId); // Asegúrate de tener este método en tu modelo de usuario
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      // Puedes excluir el password y otros campos sensibles al devolver los datos del usuario
+      res.status(200).json({ data: { name: user.name, email: user.email } });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+      next(error);
+    }
+  });
   // Editar perfil de usuario
   app.put("/users", authMiddleware, async (req, res, next) => {
     try {
@@ -213,19 +226,34 @@ const routes = (app) => {
   app.delete("/users/:id", authMiddleware, async (req, res, next) => {
     try {
       const userId = req.params.id;
+      const enteredPassword = req.body.password;
       const user = req.user;
+      if (!enteredPassword) {
+        return res
+          .status(400)
+          .json({
+            message: "Se requiere la contraseña para eliminar la cuenta",
+          });
+      }
       if (user.id !== parseInt(userId)) {
         return res
           .status(403)
           .json({ message: "You are not authorized to perform this action" });
       }
-      // Eliminar los enlaces asociados al usuario
+      const isPasswordCorrect = await bcrypt.compare(
+        enteredPassword,
+        user.password
+      );
+      if (!isPasswordCorrect) {
+        return res
+          .status(403)
+          .json({ message: "La contraseña ingresada es incorrecta" });
+      }
       await linkModel.deleteByUserId(userId);
-      // Eliminar el usuario
       await userModel.deleteById(userId);
-      res.status(200).json({ message: "User deleted successfully" });
+      res.json({ message: "La cuenta ha sido eliminada" });
     } catch (err) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Se produjo un error en el servidor" });
       next(err);
     }
   });
@@ -240,5 +268,5 @@ const routes = (app) => {
     res.status(404);
     res.send("Página no encontrada");
   });
-}
+};
 module.exports = routes;

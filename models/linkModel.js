@@ -15,10 +15,10 @@ linkModel.findById = async (id) => {
   connection.release();
   return result;
 };
-linkModel.find = async (date) => {
+linkModel.find = async (date, userId) => {
   const connection = await getConnection();
-  const sql = `SELECT links.id, links.userId, links.url, links.title, links.description, links.createdAt, count(v.id) as votes FROM links left join votes v on links.id = v.linkId  WHERE convert(links.createdAt,date) = ? group by links.id`;
-  let [result] = await connection.query(sql, [date]);
+  const sql = "SELECT links.id, links.userId, links.url, links.title, links.description, links.createdAt, count(v.id) as votes, count(uv.id) as liked FROM links left join votes v on links.id = v.linkId left join (SELECT * FROM votes WHERE userId=?) uv on links.id=uv.linkId WHERE convert(links.createdAt,date) = ? group by links.id order by createdAt desc";
+  let [result] = await connection.query(sql, [userId,date]);
   connection.release();
   return result;
 };
@@ -37,3 +37,13 @@ linkModel.deleteByUserId = async (userId) => {
   return result;
 };
 module.exports = linkModel;
+
+
+
+
+
+
+
+
+
+

@@ -26,7 +26,7 @@ async function main() {
         title VARCHAR(255) NOT NULL,
         description VARCHAR(255),
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (userId) REFERENCES users(id) on delete cascade
+        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
       );
     `);
     await connection.query(`
@@ -36,8 +36,8 @@ async function main() {
         linkId INT NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         voteCount INT NOT NULL DEFAULT 0, -- Columna para contar los votos
-        FOREIGN KEY (userId) REFERENCES users(id),
-        FOREIGN KEY (linkId) REFERENCES links(id) on delete cascade
+        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (linkId) REFERENCES links(id) ON DELETE CASCADE
       );
     `);
   } catch (error) {

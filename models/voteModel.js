@@ -40,3 +40,4 @@ voteModel.updateVoteCount = async (linkId) => {
   connection.release();
 };
 module.exports = voteModel;
+
